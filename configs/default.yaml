@@ -1,0 +1,174 @@
+experiment:
+  name: cholectrack20_full
+  variant: full
+  output_dir: outputs/cholectrack20_full
+data:
+  dataset_root: ../data
+  dataset_name: cholectrack20
+  obs_len: 5
+  pred_len: 5
+  sample_stride: 1
+  expected_orig_frame_step: 25
+  original_fps: null
+  history_coordinate_mode: absolute_normalized_xy
+  future_source_coordinate_mode: absolute_normalized_xy
+  future_target_mode: relative_to_last_history
+  relative_reference: last_history_point
+  input_columns: [x, y]
+  image_index_column: orig_frame
+  sequence_index_column: frame
+  gap_policy: split
+  invalid_coordinate_policy: reject_window_with_report
+  split_source: existing_csv_directories
+stage1:
+  method: vae_gmm
+  seed: 42 # Fixed Stage 1 artifact seed; independent of the main model training.seed.
+  input_representation: future_relative_to_last_history
+  reference_point: last_history_point
+  hidden_dims: [64, 32]
+  latent_dim: 4
+  latent_representation: posterior_mean
+  reconstruction_reduction: mean
+  kl_weight: 0.001
+  batch_size: 256
+  epochs: 50
+  learning_rate: 0.001
+  optimizer: adam
+  betas: [0.9, 0.999]
+  eps: 0.00000001
+  weight_decay: 0.0
+  vae_checkpoint: stage1/vae.pt # Relative to experiment.output_dir
+  train_latents: stage1/train_latents.npz
+  gmm_artifact: stage1/gmm.npz
+  qgt_artifact: stage1/qgt_train.npz
+  prototype_artifact: stage1/prototypes.npz
+  prototype_n_init: 20
+  prototype_max_iter: 500
+  prototype_tol: 0.0001
+  prototype_soft_scale: 1.0
+  gmm:
+    covariance_type: full
+    reg_covar: 0.000001
+    n_init: 10
+    max_iter: 500
+    tol: 0.001
+trajectory_encoder:
+  input_dim: 2
+  hidden_dim: 128
+  num_layers: 2
+  num_heads: 4
+  feedforward_dim: 512
+  dropout: 0.0
+  positional_encoding: sinusoidal
+video_encoder:
+  model: pl_stitch_vit_base
+  source_root: ../PL-Stitch # Provenance only; vendored backbone used at runtime
+  checkpoint: ../PL-Stitch/pl_lemon.pth
+  checkpoint_key: model
+  checkpoint_prefix: backbone.
+  patch_size: 16
+  return_all_tokens: false
+  masked_im_modeling: false
+  freeze_mode: partial_finetune
+  trainable_blocks: 2
+  trainable_norm: true
+  input_resolution: 224
+  temporal_adapter: per_frame_cls
+  temporal_positional_encoding: sinusoidal
+  spatial_transform: resize_full_frame
+  interpolation: bicubic
+  rgb_mean: [0.485, 0.456, 0.406]
+  rgb_std: [0.229, 0.224, 0.225]
+  output_dim: 128
+  cache_features: false
+mode_supervision:
+  enabled: true
+  label_type: soft
+  num_modes: 4
+  pooling: attention
+  pooling_hidden_dim: 128
+  head_hidden_dim: 128
+  lambda_traj: 1.0
+  lambda_video: 1.0
+  encoder_grad_scale: 1.0 # Mode-branch gradient into each shared encoder; heads keep full loss.
+  probability_tolerance: 0.00001
+fusion:
+  method: concat_mlp
+  num_heads: 4
+  hidden_dim: 256
+  output_dim: 128
+imf:
+  implementation: official_jax_math_pytorch_port
+  state_representation: future_relative_to_last_history
+  output_representation: future_relative_to_last_history
+  conditioning_method: in_context_prefix
+  hidden_dim: 256
+  num_layers: 8
+  aux_head_depth: 2
+  num_heads: 4
+  mlp_ratio: 2.6666666666666665
+  token_init_constant: 1.0
+  embedding_init_constant: 1.0
+  weight_init_constant: 0.32
+  scalar_embedding_dim: 256
+  scalar_max_period: 10000.0
+  rope_theta: 10000.0
+  rms_norm_eps: 0.000001
+  attention_backend: math
+  noise_type: gaussian
+  time_mean: -0.4
+  time_std: 1.0
+  data_proportion: 0.5
+  cfg_beta: 1.0
+  cfg_s_max: 7.0
+  condition_dropout: 0.1
+  cfg_interval_min_range: [0.0, 0.5]
+  cfg_interval_max_range: [0.5, 1.0]
+  norm_p: 1.0
+  norm_eps: 0.01
+  cfg_tokens: 4
+  interval_tokens: 2
+  time_tokens: 4
+  num_steps: 1
+  sampling_omega: 1.0
+  sampling_t_min: 0.0
+  sampling_t_max: 1.0
+  num_samples: 20
+training:
+  batch_size: 16
+  epochs: 100
+  learning_rate: 0.0001
+  optimizer: adamw
+  betas: [0.9, 0.95]
+  eps: 0.00000001
+  weight_decay: 0.01
+  seed: 42
+  amp: false
+  device: auto
+  num_workers: 0
+  deterministic: true
+  checkpoint_every_epochs: 1
+  validate_every_epochs: 1
+evaluation:
+  K: 20
+  seed: 42
+  batch_size: 16
+  save_all_predictions: true
+  restore_absolute_with: last_history_point
+  metric_prediction_representation: absolute_normalized_xy
+  metric_target_representation: absolute_normalized_xy
+  pixel_metrics: true
+  pixel_space: actual_image
+  ade_fde_reduction: mean_over_generated_samples
+sanity:
+  subset_size: 4
+  mode_steps: 50
+  joint_steps: 100
+  learning_rate: 0.001
+  betas: [0.9, 0.999]
+  eps: 0.00000001
+  weight_decay: 0.0
+  warmup_steps: 5
+  gradient_tolerance: 0.0
+  require_improvement: true
+  visualization_samples: 3

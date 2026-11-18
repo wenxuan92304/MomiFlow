@@ -1,0 +1,12 @@
+extends: ../cholectrack20_improved_full.yaml
+experiment:
+  name: cholectrack20_full_sensitivity_k6
+  output_dir: outputs/cholectrack20_full_sensitivity_k6
+stage1:
+  prototype_artifact: ../cholectrack20_stage1_geometry_k6/stage1/prototypes.npz
+  qgt_artifact: ../cholectrack20_stage1_geometry_k6/stage1/qgt_train.npz
+mode_supervision:
+  num_modes: 6
+training:
+  epochs: 20
+  checkpoint_every_epochs: 20

@@ -1,0 +1,16 @@
+extends: trajectory_only.yaml
+experiment:
+  name: cholectrack20_improved_trajectory_mode
+  variant: trajectory_mode
+  output_dir: outputs/cholectrack20_improved_trajectory_mode
+# Read-only shared Stage 1; construct it with cholectrack20_stage1_geometry.yaml.
+stage1:
+  method: geometry_prototypes
+  latent_representation: direct_future_rel
+  prototype_artifact: ../cholectrack20_stage1_geometry/stage1/prototypes.npz
+  qgt_artifact: ../cholectrack20_stage1_geometry/stage1/qgt_train.npz
+mode_supervision:
+  enabled: true
+  lambda_traj: 0.1
+  lambda_video: 0.0
+  encoder_grad_scale: 0.25

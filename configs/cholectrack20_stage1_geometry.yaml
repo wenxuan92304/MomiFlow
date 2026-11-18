@@ -1,0 +1,9 @@
+extends: default.yaml
+experiment:
+  name: cholectrack20_stage1_geometry
+  output_dir: outputs/cholectrack20_stage1_geometry
+stage1:
+  method: geometry_prototypes
+  latent_representation: direct_future_rel
+  prototype_artifact: stage1/prototypes.npz
+  qgt_artifact: stage1/qgt_train.npz

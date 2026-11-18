@@ -1,0 +1,6 @@
+extends: ../cholectrack20_stage1_geometry.yaml
+experiment:
+  name: cholectrack20_stage1_geometry_k6
+  output_dir: outputs/cholectrack20_stage1_geometry_k6
+mode_supervision:
+  num_modes: 6

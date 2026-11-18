@@ -1,0 +1,7 @@
+extends: default.yaml
+experiment:
+  name: cholectrack20_trajectory_only
+  variant: trajectory_only
+  output_dir: outputs/cholectrack20_trajectory_only
+mode_supervision:
+  enabled: false

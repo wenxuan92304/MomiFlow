@@ -1,0 +1,8 @@
+extends: trajectory_only.yaml
+experiment:
+  name: phakir_trajectory_only
+  output_dir: outputs/phakir_trajectory_only
+data:
+  dataset_name: phakir
+mode_supervision:
+  enabled: false

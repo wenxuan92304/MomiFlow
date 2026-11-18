@@ -1,0 +1,11 @@
+extends: phakir.yaml
+experiment:
+  name: phakir_stage1_geometry
+  output_dir: outputs/phakir_stage1_geometry
+stage1:
+  method: geometry_prototypes
+  latent_representation: direct_future_rel
+  prototype_artifact: stage1/prototypes.npz
+  qgt_artifact: stage1/qgt_train.npz
+mode_supervision:
+  num_modes: 4

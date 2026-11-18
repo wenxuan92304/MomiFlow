@@ -1,0 +1,10 @@
+extends: ../phakir_improved_full.yaml
+experiment:
+  name: phakir_full_sensitivity_weight2
+  output_dir: outputs/phakir_full_sensitivity_weight2
+mode_supervision:
+  lambda_traj: 0.2
+  lambda_video: 0.2
+training:
+  epochs: 67
+  checkpoint_every_epochs: 67

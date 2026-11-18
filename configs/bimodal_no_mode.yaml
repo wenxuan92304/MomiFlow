@@ -1,0 +1,7 @@
+extends: default.yaml
+experiment:
+  name: cholectrack20_bimodal_no_mode
+  variant: bimodal_no_mode
+  output_dir: outputs/cholectrack20_bimodal_no_mode
+mode_supervision:
+  enabled: false

@@ -1,0 +1,6 @@
+extends: phakir_improved_full.yaml
+experiment:
+  name: phakir_improved_hard_label
+  output_dir: outputs/phakir_improved_hard_label
+mode_supervision:
+  label_type: hard

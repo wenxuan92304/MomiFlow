@@ -1,0 +1,8 @@
+extends: default.yaml
+experiment:
+  name: phakir_full
+  output_dir: outputs/phakir_full
+data:
+  dataset_name: phakir
+evaluation:
+  pixel_metrics: true

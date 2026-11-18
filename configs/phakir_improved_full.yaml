@@ -1,0 +1,13 @@
+extends: phakir.yaml
+experiment:
+  name: phakir_improved_full
+  output_dir: outputs/phakir_improved_full
+stage1:
+  method: geometry_prototypes
+  latent_representation: direct_future_rel
+  prototype_artifact: ../phakir_stage1_geometry/stage1/prototypes.npz
+  qgt_artifact: ../phakir_stage1_geometry/stage1/qgt_train.npz
+mode_supervision:
+  lambda_traj: 0.1
+  lambda_video: 0.1
+  encoder_grad_scale: 0.25
